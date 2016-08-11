@@ -24,7 +24,7 @@ class ManifestLoader(object):
 		self.data = self.response.json()
 		return self
 	def transform(self):
-		returns elf
+		return self
 	def serialize(self):
 		return json.dumps(self.data)
 
