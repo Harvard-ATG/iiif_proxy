@@ -6,19 +6,19 @@ class ManifestLoader(object):
 		'lib': 'http://iiif.lib.harvard.edu',
 		'huam': 'http://iiif.harvardartmuseums.org'
 	}
-	def __init__(path):	
+	def __init__(self, path):	
 		self.path = path
 		self.response = None
 		self.data = None
 	def get_org(self):
-		return self.path.split('/')[1]
+		return self.path.split('/')[2]
 	def get_identifier(self):
-		return '/'.join(self.path.split('/')[2:])
+		return '/'.join(self.path.split('/')[3:])
 	def get_url(self):
 		context = {}
 		context['base_url'] = self.org_urls[self.get_org()]
 		context['identifier'] = self.get_identifier()
-		return '{base_url}{identifier}'.format(**context)
+		return '{base_url}/{identifier}'.format(**context)
 	def fetch(self):
 		self.response = requests.get(self.get_url())
 		self.data = self.response.json()
@@ -30,11 +30,11 @@ class ManifestLoader(object):
 
 def application(env, start_response):
 	start_response('200 OK', [('Content-Type', 'application/json')])
-	#try:
-	#	loader = ManifestLoader(env['PATH_INFO'])
-	#	loader.fetch().transform()
-	#	output = loader.serialize()
-	#except Exception as e:
-	#	output = str(e)
-	return 'Hello world! ' + str(env)
+	try:
+		loader = ManifestLoader(env['PATH_INFO'])
+		loader.fetch().transform()
+		output = loader.serialize()
+	except Exception as e:
+		output = str(e)
+	return 'Hello world! ' + str(env) + ' ' + output
 
