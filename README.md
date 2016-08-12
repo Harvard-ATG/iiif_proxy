@@ -20,6 +20,8 @@ $ sudo cp /vagrant/etc/init/iiif_proxy.conf /etc/init/iiif_proxy.conf
 $ sudo service iiif_proxy start
 ```
 
+See the configuration for the [uwsgi](http://uwsgi-docs.readthedocs.io/) application server in `app/config.ini`. To manually start the application server, just run `cd app && uwsgi config.ini`.
+
 #### Monitor log files
 
 ```sh
