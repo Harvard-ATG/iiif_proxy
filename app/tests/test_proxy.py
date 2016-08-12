@@ -25,26 +25,26 @@ class TestManifestProxy(unittest.TestCase):
   def test_transform(self):
     for org in self.manifests:
       manifest = self.manifests[org]
-      path = '/meta/%s/manifest/123' % org
-      proxy = ManifestProxy(self.fake_server_url, path)
+      path = '%s/manifest/123' % org
+      proxy = ManifestProxy(self.fake_image_proxy_url, path)
       result = proxy.transform(manifest)
       self.assertEqual(result['@id'], manifest['@id'])
     
       for i, canvas in enumerate(result['sequences'][0]['canvases']):
         actual_resource_url = canvas['images'][0]['resource']['@id']
         actual_service_url = canvas['images'][0]['resource']['service']['@id']
-        self.assertEqual(actual_resource_url, proxy.image_proxy_url(actual_resource_url))
-        self.assertEqual(actual_service_url, proxy.image_proxy_url(actual_service_url))
+        self.assertEqual(actual_resource_url, proxy.get_image_url(actual_resource_url))
+        self.assertEqual(actual_service_url, proxy.get_image_url(actual_service_url))
   
   def test_image_proxy_url(self):
-    proxy = ManifestProxy(self.fake_server_url, '/meta/lib/xyz')
+    proxy = ManifestProxy(self.fake_server_url, 'lib/path/to/manifest.json')
     actual_resource_url = 'http://ids.lib.harvard.edu/ids/iiif/43182083/full/full/0/native.jpg'
     expected_resource_url = '%s/ids/iiif/43182083/full/full/0/native.jpg' % self.fake_image_proxy_url
     actual_service_url = 'http://ids.lib.harvard.edu/ids/iiif/43182083'
     expected_service_url = '%s/ids/iiif/43182083' % self.fake_image_proxy_url
     
-    self.assertEqual(proxy.image_proxy_url(actual_resource_url), expected_resource_url)
-    self.assertEqual(proxy.image_proxy_url(actual_service_url), expected_service_url)
+    self.assertEqual(proxy.get_image_url(actual_resource_url), expected_resource_url)
+    self.assertEqual(proxy.get_image_url(actual_service_url), expected_service_url)
   
 if __name__ == "__main__":
   unittest.main()

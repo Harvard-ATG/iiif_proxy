@@ -5,24 +5,43 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ManifestProxy(object):
-	image_url = 'http://ids.lib.harvard.edu'
+	"""
+	The ManifestProxy class is responsible for requesting a IIIF Manifest (JSON format)
+	and replacing all references to IIIF image resources to point to a proxy server.
+	
+	The end goal is to configure the proxy server so that it supports SSL and can
+	therefore serve up IIIF manifests and images securely. This is a requirement
+	for IIIF clients (Mirador) running on secure sites (Canvas).
+	"""
+	
+
+	image_url = {
+		'lib': 'http://ids.lib.harvard.edu',
+		'huam': 'http://ids.lib.harvard.edu',
+	}
+	
 	manifest_url = {
 		'lib': 'http://iiif.lib.harvard.edu',
 		'huam': 'http://iiif.harvardartmuseums.org'
 	}
-	def __init__(self, base_url, request_path):
+	
+	image_proxy_fmt = '{base_url}/images/{identifier}'
+
+	def __init__(self, image_proxy_url, request_path):
 		path = request_path.split('/')
-		if len(path) < 4:
-			raise Exception("invalid request path (length < 4). expected: /{prefix}/{org}/{identifier}...")
-		self.org = path[2]
-		self.identifier = '/'.join(path[3:])
-		self.base_url = base_url
+		if len(path) < 2:
+			raise Exception("invalid request path (length < 2). expected: {org}/path/to/manifest")
+		self.org = path[0]
+		if self.org not in self.manifest_url or self.org not in self.image_url:
+			raise Exception("invalid org: %s" % self.org)
+		self.identifier = '/'.join(path[1:])
+		self.image_proxy_url = image_proxy_url 
 		self.res = None
 		self.data = None
-		logger.debug("instantiated manifest proxy with %s %s" %(self.org, self.identifier))
+		logger.debug("instantiated manifest proxy with org [%s] manifest identifier [%s]" %(self.org, self.identifier))
 
 	def load(self):
-		url = '%s/%s' % (self.manifest_url.get(self.org, ''), self.identifier)
+		url = '%s/%s' % (self.manifest_url[self.org], self.identifier)
 		self.res = requests.get(url)
 		if self.res.status_code == 200:
 			self.data = self.transform(self.res.json())
@@ -38,15 +57,15 @@ class ManifestProxy(object):
 					resource = image.get('resource', {})
 					service = resource.get('service', {})
 					if '@id' in resource:
-						resource['@id'] = self.image_proxy_url(resource['@id'])
+						resource['@id'] = self.get_image_url(resource['@id'])
 					if '@id' in service:
-						service['@id'] = self.image_proxy_url(service['@id'])
+						service['@id'] = self.get_image_url(service['@id'])
 		return manifest
 
-	def image_proxy_url(self, url):
-		if url.startswith(self.image_url):
-			url_path = url.replace(self.image_url, '', 1)
-			return "%s/images/%s" % (self.base_url, url_path[1:])
+	def get_image_url(self, url):
+		if url.startswith(self.image_url[self.org]):
+			url_path = url.replace(self.image_url[self.org], '', 1)
+			return self.image_proxy_fmt.format(base_url=self.image_proxy_url, identifier=url_path[1:])
 		return url
 
 	def serialize(self):
