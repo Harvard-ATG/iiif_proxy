@@ -10,7 +10,7 @@ class TestManifestProxy(unittest.TestCase):
     super(TestManifestProxy, self).__init__(*args, **kwargs)
     self.manifests = {}
     self.fake_server_url = 'https://iiif.localhost'
-    self.fake_image_proxy_url = '%s/images' % self.fake_server_url
+    self.fake_proxy_server_url = '%s/images' % self.fake_server_url
 
   def setUp(self):
     fixtures = {
@@ -26,7 +26,7 @@ class TestManifestProxy(unittest.TestCase):
     for org in self.manifests:
       manifest = self.manifests[org]
       path = '%s/manifest/123' % org
-      proxy = ManifestProxy(self.fake_image_proxy_url, path)
+      proxy = ManifestProxy(self.fake_proxy_server_url, path)
       result = proxy.transform(manifest)
       self.assertEqual(result['@id'], manifest['@id'])
     
@@ -39,9 +39,9 @@ class TestManifestProxy(unittest.TestCase):
   def test_image_proxy_url(self):
     proxy = ManifestProxy(self.fake_server_url, 'lib/path/to/manifest.json')
     actual_resource_url = 'http://ids.lib.harvard.edu/ids/iiif/43182083/full/full/0/native.jpg'
-    expected_resource_url = '%s/ids/iiif/43182083/full/full/0/native.jpg' % self.fake_image_proxy_url
+    expected_resource_url = '%s/ids/iiif/43182083/full/full/0/native.jpg' % self.fake_proxy_server_url
     actual_service_url = 'http://ids.lib.harvard.edu/ids/iiif/43182083'
-    expected_service_url = '%s/ids/iiif/43182083' % self.fake_image_proxy_url
+    expected_service_url = '%s/ids/iiif/43182083' % self.fake_proxy_server_url
     
     self.assertEqual(proxy.get_image_url(actual_resource_url), expected_resource_url)
     self.assertEqual(proxy.get_image_url(actual_service_url), expected_service_url)

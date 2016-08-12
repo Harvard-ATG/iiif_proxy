@@ -26,7 +26,7 @@ class ManifestProxy(object):
 	
 	image_proxy_fmt = '{base_url}/images/{identifier}'
 
-	def __init__(self, image_proxy_url, request_path):
+	def __init__(self, proxy_server_url, request_path):
 		path = request_path.split('/')
 		if len(path) < 2:
 			raise Exception("invalid request path (length < 2). expected: {org}/path/to/manifest")
@@ -34,7 +34,7 @@ class ManifestProxy(object):
 		if self.org not in self.manifest_url or self.org not in self.image_url:
 			raise Exception("invalid org: %s" % self.org)
 		self.identifier = '/'.join(path[1:])
-		self.image_proxy_url = image_proxy_url 
+		self.proxy_server_url = proxy_server_url 
 		self.res = None
 		self.data = None
 		logger.debug("instantiated manifest proxy with org [%s] manifest identifier [%s]" %(self.org, self.identifier))
@@ -64,7 +64,7 @@ class ManifestProxy(object):
 	def get_image_url(self, url):
 		if url.startswith(self.image_url[self.org]):
 			url_path = url.replace(self.image_url[self.org], '', 1)
-			return self.image_proxy_fmt.format(base_url=self.image_proxy_url, identifier=url_path[1:])
+			return self.image_proxy_fmt.format(base_url=self.proxy_server_url, identifier=url_path[1:])
 		return url
 
 	def serialize(self):
