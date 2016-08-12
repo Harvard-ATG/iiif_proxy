@@ -13,7 +13,6 @@ class ManifestProxy(object):
 	therefore serve up IIIF manifests and images securely. This is a requirement
 	for IIIF clients (Mirador) running on secure sites (Canvas).
 	"""
-	
 
 	image_url = {
 		'lib': 'http://ids.lib.harvard.edu',
