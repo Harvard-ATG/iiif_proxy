@@ -1,40 +1,50 @@
 import requests
 import json
+import logging
 
-class ManifestLoader(object):
-	org_urls = {
+logger = logging.getLogger(__name__)
+
+class ManifestProxy(object):
+	url_for = {
 		'lib': 'http://iiif.lib.harvard.edu',
 		'huam': 'http://iiif.harvardartmuseums.org'
 	}
-	def __init__(self, path):	
-		self.path = path
-		self.response = None
+	def __init__(self, path=''):
+		self.org = path.split('/')[2]
+		self.identifier = '/'.join(path.split('/')[3:])
+		self.url = '%s/%s' % (self.url_for[self.org], self.identifier)
+		self.res = None
 		self.data = None
-	def get_org(self):
-		return self.path.split('/')[2]
-	def get_identifier(self):
-		return '/'.join(self.path.split('/')[3:])
-	def get_url(self):
-		context = {}
-		context['base_url'] = self.org_urls[self.get_org()]
-		context['identifier'] = self.get_identifier()
-		return '{base_url}/{identifier}'.format(**context)
-	def fetch(self):
-		self.response = requests.get(self.get_url())
-		self.data = self.response.json()
+
+	def load(self):
+		self.res = requests.get(self.url)
+		if self.res.status_code == 200:
+			self.data = self.transfrom(self.res.json())
 		return self
-	def transform(self):
-		return self
+
+	def transform(self, data):
+		return None
+
 	def serialize(self):
-		return json.dumps(self.data)
+		return json.dumps(self.data, indent=2, sort_keys=True)
 
 def application(env, start_response):
-	start_response('200 OK', [('Content-Type', 'application/json')])
+	status = '200 OK'
+	headers = [('Content-Type', 'application/json')
+	output = ''
+
 	try:
-		loader = ManifestLoader(env['PATH_INFO'])
-		loader.fetch().transform()
-		output = loader.serialize()
+		proxy = ManifestProxy(env['PATH_INFO']).load()
+		if proxy.res.status_code == 200:
+			status = '200 OK'
+			output = proxy.serialize()
+		else:
+			status = '404 Not Found'
 	except Exception as e:
-		output = str(e)
-	return 'Hello world! ' + str(env) + ' ' + output
+		status = '500 Internal Server Error'
+		output = json.dumps({"error": str(e)})
+
+	start_response(status, headers)
+
+	return output
 
