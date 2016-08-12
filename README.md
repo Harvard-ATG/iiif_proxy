@@ -31,7 +31,7 @@ $ sudo tail -f /var/log/upstart/iiif_proxy.log
 $ nosetests app/tests
 ```
 
-### Proxy URL Scheme
+### URL Scheme
 
 **IIIF Manifests**
 
@@ -49,7 +49,7 @@ $ nosetests app/tests
 _Images for the library and museum are served from the same repository._
 
 
-### Proxy Examples
+### Examples
 
 ##### IIIF Image URL
 
