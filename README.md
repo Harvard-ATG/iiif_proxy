@@ -1,12 +1,32 @@
-## Quickstart
+## Setup
+
+#### Configure nginx server
 
 ```sh
 $ sudo rm /etc/nginx/sites-enabled/default
 $ sudo ln -s /vagrant/etc/nginx/nginx.conf /etc/nginx/sites-enabled/iiif_proxy
-$ sudo service nginx stop
 $ sudo service nginx start
+```
+
+#### Configure wsgi app server
+[Upstart](http://upstart.ubuntu.com/) is the init system for ubuntu-like systems. 
+
+```sh
 $ sudo cp /vagrant/etc/init/app.conf /etc/init/iiif_proxy.conf
 $ sudo service iiif_proxy start
+```
+
+#### Monitor log files
+
+```sh
+$ sudo tail -f /var/log/nginx/error.log
+$ sudo tail -f /var/log/upstart/iiif_proxy.log 
+```
+
+#### Run Unit Tests
+
+```sh
+$ nosetests app/tests
 ```
 
 ### Examples
