@@ -1,5 +1,7 @@
 ## Setup
 
+Run `vagrant up` to stand up a local development environment then follow the instructions below.
+
 #### Configure nginx server
 
 ```sh
