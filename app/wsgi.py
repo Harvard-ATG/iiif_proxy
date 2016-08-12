@@ -1,7 +1,7 @@
 import requests
 import json
 import logging
-
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class ManifestProxy(object):
@@ -15,9 +15,11 @@ class ManifestProxy(object):
 		self.url = '%s/%s' % (self.url_for[self.org], self.identifier)
 		self.res = None
 		self.data = None
+		logger.debug("instantiated proxy with org=%s identifier=% url=%s" % (self.org, self.identifier, self.url))
 
 	def load(self):
 		self.res = requests.get(self.url)
+		logger.info("loaded url=%s response status=%s" % (self.url, self.res.status_code))
 		if self.res.status_code == 200:
 			self.data = self.transfrom(self.res.json())
 		return self
@@ -33,6 +35,7 @@ def application(env, start_response):
 	headers = [('Content-Type', 'application/json')
 	output = ''
 
+	logger.info("handling request with path=%s" % env['PATH_INFO'])
 	try:
 		proxy = ManifestProxy(env['PATH_INFO']).load()
 		if proxy.res.status_code == 200:
@@ -44,6 +47,7 @@ def application(env, start_response):
 		status = '500 Internal Server Error'
 		output = json.dumps({"error": str(e)})
 
+	logger.info("starting response with status=%s" % status)
 	start_response(status, headers)
 
 	return output
