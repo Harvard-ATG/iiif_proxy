@@ -4,7 +4,7 @@
 
 ```sh
 $ sudo rm /etc/nginx/sites-enabled/default
-$ sudo ln -s /vagrant/etc/nginx/nginx.conf /etc/nginx/sites-enabled/iiif_proxy
+$ sudo ln -s /vagrant/etc/nginx/iiif_proxy.conf /etc/nginx/sites-enabled/iiif_proxy
 $ sudo service nginx start
 ```
 
