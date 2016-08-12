@@ -8,6 +8,8 @@ $ sudo ln -s /vagrant/etc/nginx/iiif_proxy.conf /etc/nginx/sites-enabled/iiif_pr
 $ sudo service nginx start
 ```
 
+Note: be sure to configure SSL for nginx after the basic setup is done.
+
 #### Configure wsgi app server
 [Upstart](http://upstart.ubuntu.com/) is the init system for ubuntu-like systems. 
 
@@ -29,7 +31,25 @@ $ sudo tail -f /var/log/upstart/iiif_proxy.log
 $ nosetests app/tests
 ```
 
-### Examples
+### Proxy URL Scheme
+
+**IIIF Manifests**
+
+|Pattern|Organization|URL|
+|-------|------------|---|
+|`/meta/lib/<identifier>`|Harvard Library|`http://iiif.lib.harvard.edu/<identifier>`|
+|`/meta/huam/<identifier>`|Harvard Art Museums|`http://iiif.harvardartmuseums.org/<identifier>`|
+
+**IIIF Images**
+
+|Pattern|URL|
+|-------|---|
+|`/images/<identifier>`|`http://ids.lib.harvard.edu/<identifier>`|
+
+_Images for the library and museum are served from the same repository._
+
+
+### Proxy Examples
 
 ##### IIIF Image URL
 
