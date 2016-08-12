@@ -12,7 +12,7 @@ $ sudo service nginx start
 [Upstart](http://upstart.ubuntu.com/) is the init system for ubuntu-like systems. 
 
 ```sh
-$ sudo cp /vagrant/etc/init/app.conf /etc/init/iiif_proxy.conf
+$ sudo cp /vagrant/etc/init/iiif_proxy.conf /etc/init/iiif_proxy.conf
 $ sudo service iiif_proxy start
 ```
 
