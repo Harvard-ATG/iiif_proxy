@@ -37,7 +37,7 @@ def application(env, start_response):
 
 	logger.info("handling request with path=%s" % env['PATH_INFO'])
 	try:
-		proxy = ManifestProxy(env['PATH_INFO']).load()
+		proxy = ManifestProxy(env['PATH_INFO'], logger=logger).load()
 		if proxy.res.status_code == 200:
 			status = '200 OK'
 			output = proxy.serialize()
