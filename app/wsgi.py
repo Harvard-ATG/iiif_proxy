@@ -5,10 +5,10 @@ from proxy import ManifestProxy
 logger = logging.getLogger(__name__)
 
 def get_image_proxy_url(env):
-		image_proxy_url = "%s://%s" % (env['wsgi.url_scheme'], env['HTTP_HOST'])
-		if env['SERVER_PORT'] != '80':
-			image_proxy_url = '%s:%s' % (image_proxy_url, env['SERVER_PORT'])
-		return image_proxy_url
+	image_proxy_url = "%s://%s" % (env['wsgi.url_scheme'], env['HTTP_HOST'])
+	if env['SERVER_PORT'] != '80':
+		image_proxy_url = '%s:%s' % (image_proxy_url, env['SERVER_PORT'])
+	return image_proxy_url
 
 def application(env, start_response):
 	logging.basicConfig(level=logging.DEBUG)
