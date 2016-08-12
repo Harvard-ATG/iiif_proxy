@@ -37,7 +37,7 @@ class ManifestProxy(object):
 
 def application(env, start_response):
 	status = '200 OK'
-	headers = [('Content-Type', 'application/json')
+	headers = [('Content-Type', 'application/json')]
 	output = ''
 
 	logger.info("handling request with path=%s" % env['PATH_INFO'])
