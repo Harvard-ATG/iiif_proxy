@@ -1,8 +1,13 @@
 import requests
 import json
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+logger.addHandler(ch)
 
 class ManifestProxy(object):
 	url_for = {
