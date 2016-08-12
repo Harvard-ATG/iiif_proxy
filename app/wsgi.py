@@ -30,7 +30,7 @@ class ManifestProxy(object):
 		return self
 
 	def transform(self, data):
-		return None
+		return data
 
 	def serialize(self):
 		return json.dumps(self.data, indent=2, sort_keys=True)
