@@ -6,17 +6,22 @@ Run `vagrant up` to stand up a local development environment then follow the ins
 
 ```sh
 $ sudo rm /etc/nginx/sites-enabled/default
-$ sudo ln -s /vagrant/etc/nginx/iiif_proxy.conf /etc/nginx/sites-enabled/iiif_proxy
+$ sudo cp ./etc/nginx/iiif_proxy.conf /etc/nginx/sites-enabled/iiif_proxy
 $ sudo service nginx start
 ```
 
-Note: be sure to configure SSL for nginx after the basic setup is done.
+Note: be sure to configure SSL for nginx after the basic setup is done. For local testing, you can configure a self-signed certificate like this:
+
+```sh
+$ sudo mkdir /etc/nginx/ssl
+$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
+```
 
 #### Configure wsgi app server
 [Upstart](http://upstart.ubuntu.com/) is the init system for ubuntu-like systems. 
 
 ```sh
-$ sudo cp /vagrant/etc/init/iiif_proxy.conf /etc/init/iiif_proxy.conf
+$ sudo cp ./etc/init/iiif_proxy.conf /etc/init/iiif_proxy.conf
 $ sudo service iiif_proxy start
 ```
 
