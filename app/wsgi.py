@@ -5,8 +5,9 @@ from proxy import ManifestProxy
 logger = logging.getLogger(__name__)
 
 def get_proxy_server_url(env):
+	host_port_specified = ':' in env['HTTP_HOST']
 	proxy_server_url = "%s://%s" % (env['wsgi.url_scheme'], env['HTTP_HOST'])
-	if env['SERVER_PORT'] not in ('80', '443'):
+	if not host_port_specified and env['SERVER_PORT'] not in ('80', '443'):
 		proxy_server_url = '%s:%s' % (proxy_server_url, env['SERVER_PORT'])
 	return proxy_server_url
 
@@ -21,12 +22,15 @@ def application(env, start_response):
 	headers = [('Content-Type', 'application/json')]
 	output = ''
 
+	logger.debug(env)
 	logger.info("handling request with path=%s" % env['PATH_INFO'])
 	try:
-		proxy_server_url = get_proxy_server_url(env)
-		request_path = env['PATH_INFO'].split('/')
-		proxy = ManifestProxy(proxy_server_url, '/'.join(request_path[2:]))
-		proxy.load()
+		path = env['PATH_INFO'].split('/')[2:]
+		proxy = ManifestProxy(
+			proxy_server_url=get_proxy_server_url(env),
+			org=path[0],
+			identifier='/'.join(path[1:]),
+		).load()
 		if proxy.res.status_code == 200:
 			status = '200 OK'
 			output = proxy.serialize()

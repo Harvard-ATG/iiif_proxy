@@ -11,35 +11,42 @@ class ManifestProxy(object):
 	
 	The end goal is to configure the proxy server so that it supports SSL and can
 	therefore serve up IIIF manifests and images securely. This is a requirement
-	for IIIF clients (Mirador) running on secure sites (Canvas).
+	for IIIF clients like Mirador running on secure sites like Canvas.
 	"""
 
-	image_url = {
-		'lib': 'http://ids.lib.harvard.edu',
-		'huam': 'http://ids.lib.harvard.edu',
-	}
-	
+	# Maps an organization to their respective IIIF presentation API's for loading manifests
 	manifest_url = {
 		'lib': 'http://iiif.lib.harvard.edu',
 		'huam': 'http://iiif.harvardartmuseums.org'
 	}
-	
-	image_proxy_fmt = '{base_url}/images/{identifier}'
 
-	def __init__(self, proxy_server_url, request_path):
-		path = request_path.split('/')
-		if len(path) < 2:
-			raise Exception("invalid request path (length < 2). expected: {org}/path/to/manifest")
-		self.org = path[0]
-		if self.org not in self.manifest_url or self.org not in self.image_url:
-			raise Exception("invalid org: %s" % self.org)
-		self.identifier = '/'.join(path[1:])
-		self.proxy_server_url = proxy_server_url 
+	# Original URL for images expected to be found in maniefsts
+	image_url = 'http://ids.lib.harvard.edu'
+	
+	# Proxy URL for images 
+	image_proxy_fmt = '{url}/images/{identifier}'
+
+	def __init__(self, **kwargs): 
+		self.proxy_server_url = kwargs.pop('proxy_server_url', None)
+		self.org = kwargs.pop('org', None)
+		self.identifier = kwargs.pop('identifier', None)
+		if kwargs:
+			raise TypeError('Unexpected **kwargs: %r' % kwargs)
+		if self.org is None or self.org not in self.manifest_url:
+			raise ValueError("invalid org: %s" % self.org)
+		if self.identifier is None:
+			raise ValueError("invalid identifier: %s" % self.identifier)
+		if self.proxy_server_url is None:
+			raise ValueError("invalid proxy server url: %s" % self.proxy_server_url)
 		self.res = None
 		self.data = None
-		logger.debug("instantiated manifest proxy with org [%s] manifest identifier [%s]" %(self.org, self.identifier))
+		logger.debug("instantiated manifest proxy with url [%s] org [%s] manifest identifier [%s]" %(self.proxy_server_url, self.org, self.identifier))
 
 	def load(self):
+		'''
+		Loads the requested IIIF manifest (i.e. JSON file).
+		If the request is successful, modify the manifest so that image URLs are proxied.
+		'''
 		url = '%s/%s' % (self.manifest_url[self.org], self.identifier)
 		self.res = requests.get(url)
 		if self.res.status_code == 200:
@@ -47,6 +54,9 @@ class ManifestProxy(object):
 		return self
 
 	def transform(self, manifest):
+		'''
+		Modifies the given IIIF manifest so that all IIIF image server URLs are proxied.
+		'''
 		sequences = manifest.get('sequences', [])
 		for sequence in sequences:
 			canvases = sequence.get('canvases', [])
@@ -62,9 +72,12 @@ class ManifestProxy(object):
 		return manifest
 
 	def get_image_url(self, url):
-		if url.startswith(self.image_url[self.org]):
-			url_path = url.replace(self.image_url[self.org], '', 1)
-			return self.image_proxy_fmt.format(base_url=self.proxy_server_url, identifier=url_path[1:])
+		'''
+		Returns the proxy URL for a given IIIF image server URL
+		'''
+		if url.startswith(self.image_url):
+			url_path = url.replace(self.image_url, '', 1)
+			return self.image_proxy_fmt.format(url=self.proxy_server_url, identifier=url_path[1:])
 		return url
 
 	def serialize(self):
