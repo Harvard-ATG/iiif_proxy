@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 def get_proxy_server_url(env):
 	proxy_server_url = "%s://%s" % (env['wsgi.url_scheme'], env['HTTP_HOST'])
-	if env['SERVER_PORT'] != '80':
+	if env['SERVER_PORT'] not in ('80', '443'):
 		proxy_server_url = '%s:%s' % (proxy_server_url, env['SERVER_PORT'])
 	return proxy_server_url
 
