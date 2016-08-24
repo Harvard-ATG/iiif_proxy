@@ -62,8 +62,14 @@ _Images for the library and museum are served from the same repository._
 
 ##### IIIF Image URL
 
-- Image URL: http://ids.lib.harvard.edu/ids/iiif/15372852/full/400,/0/native
-- Proxy URL: https://www.iiif-proxy.net/images/ids/iiif/15372852/full/400,/0/native
+- Example #1
+    - Image URL: http://ids.lib.harvard.edu/ids/iiif/15372852/full/400,/0/native
+    - Proxy URL: https://www.iiif-proxy.net/images/ids/iiif/15372852/full/400,/0/native
+
+- Example #2
+    - Image URL: http://ids.lib.harvard.edu/ids/iiif/47174896/full/256,/0/native.jpg
+    - Proxy URL: https://www.iiif-proxy.net/images/ids/iiif/47174896/full/256,/0/native.jpg
+
 
 #####Library Manifest
 
