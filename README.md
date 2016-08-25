@@ -10,12 +10,14 @@ $ sudo cp ./etc/nginx/iiif_proxy.conf /etc/nginx/sites-enabled/iiif_proxy
 $ sudo service nginx start
 ```
 
-Note: be sure to configure SSL for nginx after the basic setup is done. For local testing, you can configure a self-signed certificate like this:
+Note: be sure to configure SSL for nginx after the basic setup is done. For _local_ testing, you can configure a self-signed certificate like this:
 
 ```sh
 $ sudo mkdir /etc/nginx/ssl
 $ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
 ```
+
+For production, consider using a free service such as [Let's Encrypt](https://letsencrypt.org/). Instructions are available [on the nginx website](https://www.nginx.com/blog/free-certificates-lets-encrypt-and-nginx/).
 
 #### Configure wsgi app server
 [Upstart](http://upstart.ubuntu.com/) is the init system for ubuntu-like systems. 
@@ -25,7 +27,7 @@ $ sudo cp ./etc/init/iiif_proxy.conf /etc/init/iiif_proxy.conf
 $ sudo service iiif_proxy start
 ```
 
-See the configuration for the [uwsgi](http://uwsgi-docs.readthedocs.io/) application server in `app/config.ini`. To manually start the application server, just run `cd app && uwsgi config.ini`.
+See the configuration for the [uwsgi](http://uwsgi-docs.readthedocs.io/) application server in `app/config.ini`. To manually start the application server, just run `cd app && sudo uwsgi config.ini`.
 
 #### Monitor log files
 
