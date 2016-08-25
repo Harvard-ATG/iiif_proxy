@@ -78,7 +78,7 @@ _Images for the library and museum are served from the same repository._
 - Manifest URL: http://iiif.lib.harvard.edu/manifests/drs:15372472
 - Proxy URL: https://www.iiif-proxy.net/meta/lib/manifests/drs:15372472
 
-#####Harvard Art Museum Manifes
+#####Harvard Art Museum Manifest
 
 - Manifest URL: http://iiif.harvardartmuseums.org/manifests/object/299843
 - Proxy URL: https://www.iiif-proxy.net/meta/huam/manifests/object/299843
