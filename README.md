@@ -62,16 +62,22 @@ _Images for the library and museum are served from the same repository._
 
 ##### IIIF Image URL
 
-- Image URL: http://ids.lib.harvard.edu/ids/iiif/15372852/full/400,/0/native
-- Proxy URL: http://localhost:8080/images/ids/iiif/15372852/full/400,/0/native
+- Example #1
+    - Image URL: http://ids.lib.harvard.edu/ids/iiif/15372852/full/400,/0/native
+    - Proxy URL: https://www.iiif-proxy.net/images/ids/iiif/15372852/full/400,/0/native
+
+- Example #2
+    - Image URL: http://ids.lib.harvard.edu/ids/iiif/47174896/full/256,/0/native.jpg
+    - Proxy URL: https://www.iiif-proxy.net/images/ids/iiif/47174896/full/256,/0/native.jpg
+
 
 #####Library Manifest
 
 - Manifest URL: http://iiif.lib.harvard.edu/manifests/drs:15372472
-- Proxy URL: http://localhost:8080/meta/lib/manifests/drs:15372472
+- Proxy URL: https://www.iiif-proxy.net/meta/lib/manifests/drs:15372472
 
 #####Harvard Art Museum Manifes
 
 - Manifest URL: http://iiif.harvardartmuseums.org/manifests/object/299843
-- Proxy URL: http://localhost:8080/meta/huam/manifests/object/299843
+- Proxy URL: https://www.iiif-proxy.net/meta/huam/manifests/object/299843
 
