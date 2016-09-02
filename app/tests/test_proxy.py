@@ -13,30 +13,33 @@ class TestManifestProxy(unittest.TestCase):
 
   def setUp(self):
     fixtures = {
-      'lib': 'lib_drs_15372472.json',
-      'huam':'huam_object_299843.json'
+      'lib': ['lib_drs_15372472.json', 'lib_drs_3710791.json'],
+      'huam':['huam_object_299843.json'],
     }
-    for org, filename in fixtures.iteritems():
+    for org, list_of_manifests in fixtures.iteritems():
       if org not in self.manifests:
-        with open(os.path.join(FIXTURES_DIR, filename)) as f:
-          self.manifests[org] = json.loads(f.read())
+        for filename in list_of_manifests:
+          with open(os.path.join(FIXTURES_DIR, filename)) as f:
+            filedata = json.loads(f.read())
+            self.manifests.setdefault(org, []).append(filedata)
 
   def test_transform(self):
-    for org in self.manifests:
-      manifest = self.manifests[org]
-      proxy = ManifestProxy(
-        proxy_server_url=self.fake_proxy_server_url, 
-        org=org,
-        identifier='manifest/123',
-      )
-      result = proxy.transform(manifest)
-      self.assertEqual(result['@id'], manifest['@id'])
-    
-      for i, canvas in enumerate(result['sequences'][0]['canvases']):
-        actual_resource_url = canvas['images'][0]['resource']['@id']
-        actual_service_url = canvas['images'][0]['resource']['service']['@id']
-        self.assertEqual(actual_resource_url, proxy.get_image_url(actual_resource_url))
-        self.assertEqual(actual_service_url, proxy.get_image_url(actual_service_url))
+    for org, manifests in self.manifests.iteritems():
+      for manifest in manifests:
+        proxy = ManifestProxy(
+          proxy_server_url=self.fake_proxy_server_url, 
+          org=org,
+          identifier='manifest/123',
+        )
+        result = proxy.transform(manifest)
+        self.assertEqual(result['@id'], manifest['@id'])
+      
+        for i, canvas in enumerate(result['sequences'][0]['canvases']):
+          actual_resource_url = canvas['images'][0]['resource']['@id']
+          actual_service_url = canvas['images'][0]['resource']['service']['@id']
+          self.assertEqual(actual_resource_url, proxy.get_image_url(actual_resource_url))
+          self.assertEqual(actual_service_url, proxy.get_image_url(actual_service_url))
+          print actual_service_url
   
   def test_image_proxy_url(self):
     proxy = ManifestProxy(

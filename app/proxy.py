@@ -1,3 +1,4 @@
+import re
 import json
 import requests
 import logging
@@ -21,7 +22,8 @@ class ManifestProxy(object):
 	}
 
 	# Original URL for images expected to be found in maniefsts
-	image_url = 'http://ids.lib.harvard.edu'
+	image_url_pattern = r'https?://ids.lib.harvard.edu'
+	image_url_replacement = r''
 	
 	# Proxy URL for images 
 	image_proxy_fmt = '{url}/images/{identifier}'
@@ -75,8 +77,8 @@ class ManifestProxy(object):
 		'''
 		Returns the proxy URL for a given IIIF image server URL
 		'''
-		if url.startswith(self.image_url):
-			url_path = url.replace(self.image_url, '', 1)
+		if re.match(self.image_url_pattern, url):
+			url_path = re.sub(self.image_url_pattern, self.image_url_replacement, url)
 			return self.image_proxy_fmt.format(url=self.proxy_server_url, identifier=url_path[1:])
 		return url
 
